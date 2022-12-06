@@ -4,6 +4,8 @@ import com.fbiopereira.bankaccount.domain.enums.AccountErrorMessages;
 import com.fbiopereira.bankaccount.domain.enums.OperationType;
 import com.fbiopereira.bankaccount.domain.exceptions.InvalidOperationException;
 
+import java.util.Objects;
+
 import static com.fbiopereira.bankaccount.domain.enums.AccountErrorMessages.INVALID_ACCOUNT_ID;
 import static com.fbiopereira.bankaccount.domain.enums.AccountErrorMessages.TRANSFER_DENIED_IN_DOMAIN;
 
@@ -39,5 +41,18 @@ public Account(int id){
             case transfer ->
                     throw new InvalidOperationException(TRANSFER_DENIED_IN_DOMAIN.getCode(), TRANSFER_DENIED_IN_DOMAIN.getMessage());
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return id == account.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
