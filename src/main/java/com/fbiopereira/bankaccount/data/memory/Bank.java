@@ -1,13 +1,16 @@
-package com.fbiopereira.bankaccount.domain.model;
+package com.fbiopereira.bankaccount.data.memory;
 
-import com.fbiopereira.bankaccount.domain.exceptions.AccountNotFoundException;
 import com.fbiopereira.bankaccount.domain.model.Account;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import java.util.HashSet;
 import java.util.Set;
-import static com.fbiopereira.bankaccount.domain.enums.AccountErrorMessages.ACCOUNT_DOES_NOT_EXIST;
 
 
 
+@Component
+@Scope("singleton")
 public class Bank {
 
 

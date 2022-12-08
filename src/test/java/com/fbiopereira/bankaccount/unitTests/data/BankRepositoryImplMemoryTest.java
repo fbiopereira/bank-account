@@ -1,52 +1,51 @@
 package com.fbiopereira.bankaccount.unitTests.data;
 
-import com.fbiopereira.bankaccount.domain.model.Bank;
+import com.fbiopereira.bankaccount.data.memory.BankRepositoryImpl;
 import com.fbiopereira.bankaccount.domain.enums.OperationType;
 import com.fbiopereira.bankaccount.domain.model.Account;
-import com.fbiopereira.bankaccount.usecases.BankOperations;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import com.fbiopereira.bankaccount.data.memory.Bank;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BankOperationsTest {
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class BankRepositoryImplMemoryTest {
 
-    @Test
-    public void BankCreation(){
+    BankRepositoryImpl bankRepositoryInMemory;
 
-        Bank bank = new Bank();
-        assertEquals(0, bank.getAccounts().size());
-
+    @BeforeEach
+    public void setup() {
+        bankRepositoryInMemory = new BankRepositoryImpl();
     }
 
     @Test
     public void BankSaveOneAccount(){
 
-        BankOperations bankOperations = new BankOperations();
-
-        assertEquals(0, bankOperations.getBank().getAccounts().size());
         Account account = new Account(100);
-        bankOperations.saveAccount(account);
-        assertEquals(1, bankOperations.getBank().getAccounts().size());
-
-        bankOperations.saveAccount(account);
-        assertEquals(1, bankOperations.getBank().getAccounts().size());
+        Bank bank = (Bank) bankRepositoryInMemory.save(account);
+        assertEquals(1, bank.getAccounts().size());
     }
 
     @Test
     public void BankSaveSameAccountMultipleTimes(){
 
-        Bank bank = new Bank();
-        BankOperations bankOperations = new BankOperations(bank);
+        BankRepositoryImpl bankRepositoryInMemory = new BankRepositoryImpl();
 
-        assertEquals(0, bank.getAccounts().size());
         Account account = new Account(100);
-        bankOperations.saveAccount(account);
+        Bank bank = (Bank) bankRepositoryInMemory.save(account);
         assertEquals(1, bank.getAccounts().size());
 
-        bankOperations.saveAccount(account);
+        bank = (Bank) bankRepositoryInMemory.save(account);
         assertEquals(1, bank.getAccounts().size());
 
-        bankOperations.saveAccount(account);
+        bank = (Bank) bankRepositoryInMemory.save(account);
         assertEquals(1, bank.getAccounts().size());
 
     }
@@ -55,36 +54,26 @@ public class BankOperationsTest {
     @Test
     public void BankSaveSameAccountMultipleTimesWithUpdatedBalance(){
 
-        Bank bank = new Bank();
-        BankOperations bankOperations = new BankOperations(bank);
+        BankRepositoryImpl bankRepositoryInMemory = new BankRepositoryImpl();
 
-        assertEquals(0, bank.getAccounts().size());
         Account account = new Account(100);
-        bankOperations.saveAccount(account);
-        assertEquals(1, bank.getAccounts().size());
-
         account.doOperation(50, OperationType.deposit);
-        bankOperations.saveAccount(account);
+
+        Bank bank = (Bank) bankRepositoryInMemory.save(account);
         assertEquals(1, bank.getAccounts().size());
         assertEquals(50, bank.getAccounts().toArray(new Account[0])[0].getBalance());
 
+
         account.doOperation(100, OperationType.deposit);
-        bankOperations.saveAccount(account);
+        bankRepositoryInMemory.save(account);
         assertEquals(1, bank.getAccounts().size());
         assertEquals(150, bank.getAccounts().toArray(new Account[0])[0].getBalance());
 
         account.doOperation(200, OperationType.withdraw);
-        bankOperations.saveAccount(account);
+        bankRepositoryInMemory.save(account);
         assertEquals(1, bank.getAccounts().size());
         assertEquals(-50, bank.getAccounts().toArray(new Account[0])[0].getBalance());
 
     }
 
-
-    @Test
-    public void BankTransferOperation() {
-
-
-
-    }
 }
