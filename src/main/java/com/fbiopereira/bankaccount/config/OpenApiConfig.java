@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI bankAccountOpenAPI() {
+    public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .components(new Components())
                 .info(new Info()

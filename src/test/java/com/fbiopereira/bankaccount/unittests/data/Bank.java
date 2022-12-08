@@ -1,4 +1,4 @@
-package com.fbiopereira.bankaccount.unitTests.data;
+package com.fbiopereira.bankaccount.unittests.data;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,15 +14,4 @@ public class Bank {
 
     }
 
-
-
-
-
-
-    @Test
-    public void BankTransferOperation() {
-
-
-
-    }
 }

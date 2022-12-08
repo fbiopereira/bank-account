@@ -1,4 +1,4 @@
-package com.fbiopereira.bankaccount.unitTests.model;
+package com.fbiopereira.bankaccount.unittests.model;
 import static org.junit.jupiter.api.Assertions.*;
 import com.fbiopereira.bankaccount.domain.enums.OperationType;
 import com.fbiopereira.bankaccount.domain.exceptions.InvalidOperationException;

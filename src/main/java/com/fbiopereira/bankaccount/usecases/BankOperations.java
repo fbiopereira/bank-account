@@ -1,17 +1,13 @@
 package com.fbiopereira.bankaccount.usecases;
 
-import com.fbiopereira.bankaccount.data.memory.Bank;
+import com.fbiopereira.bankaccount.domain.model.Account;
 
-public class BankOperations {
+public interface BankOperations {
 
-   private Bank bank;
-
-    public BankOperations(){
-        this.bank = new Bank();
-    }
-
-    public Bank getBank() {
-        return bank;
-    }
-
+    public void deposit(int accountId, int amount);
+    public void withdraw(int accountId, int amount);
+    public void transfer(int sourceAccountId, int destinationAccountId, int amount);
+    public void saveAccount(Account account);
+    public Account findAccountByID(int id);
+    public void resetBank();
 }
