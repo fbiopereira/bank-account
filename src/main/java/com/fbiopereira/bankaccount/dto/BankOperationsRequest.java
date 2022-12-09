@@ -2,8 +2,7 @@ package com.fbiopereira.bankaccount.dto;
 
 import com.fbiopereira.bankaccount.domain.enums.OperationType;
 
-public class BankOperationsRequest {
-
+public abstract class BankOperationsRequest {
     private OperationType type;
 
     public OperationType getType() {
@@ -32,6 +31,4 @@ public class BankOperationsRequest {
 
     private int destination;
     private int amount;
-
-
 }

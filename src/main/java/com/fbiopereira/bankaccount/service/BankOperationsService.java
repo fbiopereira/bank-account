@@ -1,13 +1,19 @@
 package com.fbiopereira.bankaccount.service;
+import com.fbiopereira.bankaccount.domain.enums.TransferAccountType;
 import com.fbiopereira.bankaccount.domain.exceptions.AccountNotFoundException;
 import com.fbiopereira.bankaccount.domain.model.Account;
 import com.fbiopereira.bankaccount.data.memory.Bank;
 import com.fbiopereira.bankaccount.usecases.BankOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.fbiopereira.bankaccount.domain.enums.AccountErrorMessages.ACCOUNT_DOES_NOT_EXIST;
 import static com.fbiopereira.bankaccount.domain.enums.OperationType.deposit;
 import static com.fbiopereira.bankaccount.domain.enums.OperationType.withdraw;
+import static com.fbiopereira.bankaccount.domain.enums.TransferAccountType.destination;
+import static com.fbiopereira.bankaccount.domain.enums.TransferAccountType.origin;
 
 @Service
 public class BankOperationsService implements BankOperations {
@@ -17,7 +23,7 @@ public class BankOperationsService implements BankOperations {
     Bank bank;
 
     @Override
-    public void deposit(int accountId, int amount) {
+    public Account deposit(int accountId, int amount) {
 
         Account account;
 
@@ -31,15 +37,16 @@ public class BankOperationsService implements BankOperations {
 
         account.doOperation(amount, deposit);
         this.saveAccount(account);
-
+        return account;
     }
 
     @Override
-    public void withdraw(int accountId, int amount) {
+    public Account withdraw(int accountId, int amount) {
         try {
             Account account = this.findAccountByID(accountId);
             account.doOperation(amount, withdraw);
             this.saveAccount(account);
+            return account;
         } catch (AccountNotFoundException e) {
             throw new AccountNotFoundException(ACCOUNT_DOES_NOT_EXIST.getCode(), ACCOUNT_DOES_NOT_EXIST.getMessage());
         }
@@ -47,13 +54,23 @@ public class BankOperationsService implements BankOperations {
 
 
     @Override
-    public void transfer(int sourceAccountId, int destinationAccountId, int amount) {
+    public Map<TransferAccountType, Account> transfer(int sourceAccountId, int destinationAccountId, int amount) {
         try {
-            this.withdraw(sourceAccountId, amount);
-            this.deposit(destinationAccountId, amount);
+            Account originAccount = this.withdraw(sourceAccountId, amount);
+            Account destinationAccount = this.deposit(destinationAccountId, amount);
+
+            Map<TransferAccountType,Account> returnMap = new HashMap<>();
+
+            returnMap.put(origin, originAccount);
+            returnMap.put(destination, destinationAccount);
+
+            return returnMap;
+
+
         } catch (AccountNotFoundException e) {
             throw new AccountNotFoundException(ACCOUNT_DOES_NOT_EXIST.getCode(), ACCOUNT_DOES_NOT_EXIST.getMessage());
         }
+
     }
 
     @Override
