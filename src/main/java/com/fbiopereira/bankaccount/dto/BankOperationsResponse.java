@@ -1,14 +1,16 @@
 package com.fbiopereira.bankaccount.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fbiopereira.bankaccount.domain.model.Account;
 
-public class BankOperationsTransferResponse {
+public class BankOperationsResponse {
 
-
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Account origin;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Account destination;
 
-    public BankOperationsTransferResponse(Account originAccount, Account destinationAccount){
+    public BankOperationsResponse(Account originAccount, Account destinationAccount){
         this.destination = destinationAccount;
         this.origin = originAccount;
     }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,7 +35,12 @@ public class BankApi {
     }
 
     @PostMapping(path = "/event", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Account Operations", responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = BankOperationsDepositWithdrawResponse.class)))})
+    @Operation(summary = "Account Operations")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Deposit, WithDraw or Transfer Ok",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BankOperationsResponse.class)) }),
+            @ApiResponse(responseCode = "404", description = "Account not found")})
     public ResponseEntity<Object> event(@RequestBody @Valid BankOperationsRequest bankOperationsRequest)  {
 
         Account account;
@@ -42,21 +48,20 @@ public class BankApi {
         switch (bankOperationsRequest.getType()){
             case deposit:
                 account = bankOperations.deposit(bankOperationsRequest.getDestination(), bankOperationsRequest.getAmount());
-                return ResponseEntity.status(HttpStatus.CREATED).body(new BankOperationsDepositWithdrawResponse(account));
+                return ResponseEntity.status(HttpStatus.CREATED).body(new BankOperationsResponse(null, account));
             case withdraw:
                 try{
                     account = bankOperations.withdraw(bankOperationsRequest.getDestination(), bankOperationsRequest.getAmount());
-                    return ResponseEntity.status(HttpStatus.CREATED).body(new BankOperationsDepositWithdrawResponse(account));
+                    return ResponseEntity.status(HttpStatus.CREATED).body(new BankOperationsResponse(account, null));
                 }
                 catch (AccountNotFoundException exception){
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0);
                 }
             case transfer:
                 try{
-                    BankOperationsTransferRequest bankOperationsTransferRequest = (BankOperationsTransferRequest) bankOperationsRequest;
-                    Map<TransferAccountType,Account> returnMap = bankOperations.transfer(bankOperationsTransferRequest.getOrigin(), bankOperationsTransferRequest.getDestination(), bankOperationsTransferRequest.getAmount());
+                    Map<TransferAccountType,Account> returnMap = bankOperations.transfer(bankOperationsRequest.getOrigin(), bankOperationsRequest.getDestination(), bankOperationsRequest.getAmount());
 
-                    return ResponseEntity.status(HttpStatus.CREATED).body(new BankOperationsTransferResponse(returnMap.get(TransferAccountType.origin), returnMap.get(TransferAccountType.destination)));
+                    return ResponseEntity.status(HttpStatus.CREATED).body(new BankOperationsResponse(returnMap.get(TransferAccountType.origin), returnMap.get(TransferAccountType.destination)));
                 }
                 catch (AccountNotFoundException exception){
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0);
@@ -64,6 +69,5 @@ public class BankApi {
         }
 
         return null;
-
     }
 }

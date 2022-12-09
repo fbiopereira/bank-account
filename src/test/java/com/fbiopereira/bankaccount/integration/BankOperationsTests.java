@@ -1,4 +1,4 @@
-package com.fbiopereira.bankaccount.integrationtests;
+package com.fbiopereira.bankaccount.integration;
 
 import com.fbiopereira.bankaccount.domain.exceptions.AccountNotFoundException;
 import com.fbiopereira.bankaccount.domain.model.Account;
@@ -103,7 +103,7 @@ public class BankOperationsTests {
             bankOperationsService.withdraw(10, 50);
             ;
         });
-        assertEquals(1, bankOperationsService.getBank().getAccounts().size());
+        assertEquals(0, bankOperationsService.getBank().getAccounts().size());
 
 
     }

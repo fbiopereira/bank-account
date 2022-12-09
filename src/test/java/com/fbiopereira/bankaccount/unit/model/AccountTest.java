@@ -1,11 +1,12 @@
-package com.fbiopereira.bankaccount.unittests.model;
+package com.fbiopereira.bankaccount.unit.model;
 import static org.junit.jupiter.api.Assertions.*;
 import com.fbiopereira.bankaccount.domain.enums.OperationType;
 import com.fbiopereira.bankaccount.domain.exceptions.InvalidOperationException;
 import com.fbiopereira.bankaccount.domain.model.Account;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-
+@SpringBootTest
 public class AccountTest {
 
     @Test
