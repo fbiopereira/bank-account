@@ -2,7 +2,7 @@ package com.fbiopereira.bankaccount.service;
 import com.fbiopereira.bankaccount.domain.enums.TransferAccountType;
 import com.fbiopereira.bankaccount.domain.exceptions.AccountNotFoundException;
 import com.fbiopereira.bankaccount.domain.model.Account;
-import com.fbiopereira.bankaccount.data.memory.Bank;
+import com.fbiopereira.bankaccount.data.Bank;
 import com.fbiopereira.bankaccount.usecases.BankOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

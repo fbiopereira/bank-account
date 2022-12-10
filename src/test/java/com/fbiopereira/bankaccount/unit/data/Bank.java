@@ -10,7 +10,7 @@ public class Bank {
     @Test
     public void BankCreation(){
 
-        com.fbiopereira.bankaccount.data.memory.Bank bank = new com.fbiopereira.bankaccount.data.memory.Bank();
+        com.fbiopereira.bankaccount.data.Bank bank = new com.fbiopereira.bankaccount.data.Bank();
         assertEquals(0, bank.getAccounts().size());
 
     }
