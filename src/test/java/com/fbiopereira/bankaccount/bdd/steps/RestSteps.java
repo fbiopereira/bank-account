@@ -1,8 +1,7 @@
 package com.fbiopereira.bankaccount.bdd.steps;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fbiopereira.bankaccount.service.BankOperationsService;
+import com.fbiopereira.bankaccount.usecases.BankOperationsImpl;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -30,7 +29,7 @@ public class RestSteps {
     public static ResultActions contextResultActions;
 
     @Autowired
-    BankOperationsService bankOperationsService;
+    BankOperationsImpl bankOperationsImpl;
 
 
     @Before
@@ -41,7 +40,7 @@ public class RestSteps {
 
     @After
     public void cleanUp() {
-        bankOperationsService.resetBank();
+        bankOperationsImpl.resetBank();
     }
 
 

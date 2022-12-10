@@ -2,7 +2,7 @@ package com.fbiopereira.bankaccount.integration;
 
 import com.fbiopereira.bankaccount.domain.exceptions.AccountNotFoundException;
 import com.fbiopereira.bankaccount.domain.model.Account;
-import com.fbiopereira.bankaccount.service.BankOperationsService;
+import com.fbiopereira.bankaccount.usecases.BankOperationsImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,59 +15,59 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class BankOperationsTests {
 
     @Autowired
-    BankOperationsService bankOperationsService;
+    BankOperationsImpl bankOperationsImpl;
 
     @BeforeEach
     public void clearBank() {
-        bankOperationsService.resetBank();
+        bankOperationsImpl.resetBank();
     }
 
     @Test
     public void resetBankTest() {
 
-        bankOperationsService.deposit("100", 100);
-        bankOperationsService.deposit("200", 100);
-        bankOperationsService.deposit("300", 100);
+        bankOperationsImpl.deposit("100", 100);
+        bankOperationsImpl.deposit("200", 100);
+        bankOperationsImpl.deposit("300", 100);
 
-        assertEquals(3, bankOperationsService.getBank().getAccounts().size());
+        assertEquals(3, bankOperationsImpl.getBank().getAccounts().size());
 
-        bankOperationsService.resetBank();
+        bankOperationsImpl.resetBank();
 
-        assertEquals(0, bankOperationsService.getBank().getAccounts().size());
+        assertEquals(0, bankOperationsImpl.getBank().getAccounts().size());
 
     }
 
     @Test
     public void depositTest() {
 
-        bankOperationsService.deposit("100", 100);
-        assertEquals(1, bankOperationsService.getBank().getAccounts().size());
-        assertEquals(100, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
+        bankOperationsImpl.deposit("100", 100);
+        assertEquals(1, bankOperationsImpl.getBank().getAccounts().size());
+        assertEquals(100, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
 
-        bankOperationsService.deposit("100", 200);
-        assertEquals(1, bankOperationsService.getBank().getAccounts().size());
-        assertEquals(300, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
+        bankOperationsImpl.deposit("100", 200);
+        assertEquals(1, bankOperationsImpl.getBank().getAccounts().size());
+        assertEquals(300, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
 
-        bankOperationsService.deposit("10", 50);
-        assertEquals(2, bankOperationsService.getBank().getAccounts().size());
-        assertEquals(50, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
+        bankOperationsImpl.deposit("10", 50);
+        assertEquals(2, bankOperationsImpl.getBank().getAccounts().size());
+        assertEquals(50, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
 
     }
 
     @Test
     public void withDrawTestSuccess() {
 
-        bankOperationsService.deposit("100", 100);
-        assertEquals(1, bankOperationsService.getBank().getAccounts().size());
-        assertEquals(100, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
-        bankOperationsService.withdraw("100", 100);
-        assertEquals(1, bankOperationsService.getBank().getAccounts().size());
-        assertEquals(0, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
+        bankOperationsImpl.deposit("100", 100);
+        assertEquals(1, bankOperationsImpl.getBank().getAccounts().size());
+        assertEquals(100, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
+        bankOperationsImpl.withdraw("100", 100);
+        assertEquals(1, bankOperationsImpl.getBank().getAccounts().size());
+        assertEquals(0, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
 
 
-        bankOperationsService.withdraw("100", 200);
-        assertEquals(1, bankOperationsService.getBank().getAccounts().size());
-        assertEquals(-200, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
+        bankOperationsImpl.withdraw("100", 200);
+        assertEquals(1, bankOperationsImpl.getBank().getAccounts().size());
+        assertEquals(-200, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
 
 
     }
@@ -76,30 +76,30 @@ public class BankOperationsTests {
     public void withDrawTestMultipleAccountsSuccess() {
 
         Account accountToCheck;
-        bankOperationsService.deposit("100", 100);
-        assertEquals(1, bankOperationsService.getBank().getAccounts().size());
-        accountToCheck = bankOperationsService.findAccountByID("100");
+        bankOperationsImpl.deposit("100", 100);
+        assertEquals(1, bankOperationsImpl.getBank().getAccounts().size());
+        accountToCheck = bankOperationsImpl.findAccountByID("100");
         assertEquals(100, accountToCheck.getBalance());
 
-        bankOperationsService.deposit("50", 50);
-        assertEquals(2, bankOperationsService.getBank().getAccounts().size());
-        accountToCheck = bankOperationsService.findAccountByID("50");
+        bankOperationsImpl.deposit("50", 50);
+        assertEquals(2, bankOperationsImpl.getBank().getAccounts().size());
+        accountToCheck = bankOperationsImpl.findAccountByID("50");
         assertEquals(50, accountToCheck.getBalance());
 
-        bankOperationsService.deposit("200", 200);
-        assertEquals(3, bankOperationsService.getBank().getAccounts().size());
-        accountToCheck = bankOperationsService.findAccountByID("200");
+        bankOperationsImpl.deposit("200", 200);
+        assertEquals(3, bankOperationsImpl.getBank().getAccounts().size());
+        accountToCheck = bankOperationsImpl.findAccountByID("200");
         assertEquals(200, accountToCheck.getBalance());
 
-        bankOperationsService.withdraw("100", 100);
-        bankOperationsService.withdraw("50", 100);
+        bankOperationsImpl.withdraw("100", 100);
+        bankOperationsImpl.withdraw("50", 100);
 
 
-        accountToCheck = bankOperationsService.findAccountByID("100");
+        accountToCheck = bankOperationsImpl.findAccountByID("100");
         assertEquals(0, accountToCheck.getBalance());
-        accountToCheck = bankOperationsService.findAccountByID("50");
+        accountToCheck = bankOperationsImpl.findAccountByID("50");
         assertEquals(-50, accountToCheck.getBalance());
-        accountToCheck = bankOperationsService.findAccountByID("200");
+        accountToCheck = bankOperationsImpl.findAccountByID("200");
         assertEquals(200, accountToCheck.getBalance());
 
     }
@@ -108,10 +108,10 @@ public class BankOperationsTests {
     public void withDrawTestAccountNotFound() {
 
         assertThrows(AccountNotFoundException.class, () -> {
-            bankOperationsService.withdraw("10", 50);
+            bankOperationsImpl.withdraw("10", 50);
             ;
         });
-        assertEquals(0, bankOperationsService.getBank().getAccounts().size());
+        assertEquals(0, bankOperationsImpl.getBank().getAccounts().size());
 
 
     }
@@ -119,57 +119,57 @@ public class BankOperationsTests {
     @Test
     public void TransferTestSuccess() {
 
-        bankOperationsService.deposit("100", 200);
-        bankOperationsService.deposit("200", 0);
+        bankOperationsImpl.deposit("100", 200);
+        bankOperationsImpl.deposit("200", 0);
 
-        assertEquals(2, bankOperationsService.getBank().getAccounts().size());
-        assertEquals(200, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
-        assertEquals(0, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
+        assertEquals(2, bankOperationsImpl.getBank().getAccounts().size());
+        assertEquals(200, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
+        assertEquals(0, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
 
-        bankOperationsService.transfer("100", "200", 100);
-        assertEquals(2, bankOperationsService.getBank().getAccounts().size());
-        assertEquals(100, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
-        assertEquals(100, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
+        bankOperationsImpl.transfer("100", "200", 100);
+        assertEquals(2, bankOperationsImpl.getBank().getAccounts().size());
+        assertEquals(100, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
+        assertEquals(100, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
     }
 
     @Test
     public void TransferTestSourceAccountNotFound() {
 
-        bankOperationsService.deposit("100", 200);
-        bankOperationsService.deposit("200", 0);
+        bankOperationsImpl.deposit("100", 200);
+        bankOperationsImpl.deposit("200", 0);
 
-        assertEquals(2, bankOperationsService.getBank().getAccounts().size());
-        assertEquals(200, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
-        assertEquals(0, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
+        assertEquals(2, bankOperationsImpl.getBank().getAccounts().size());
+        assertEquals(200, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
+        assertEquals(0, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
 
         assertThrows(AccountNotFoundException.class, () -> {
-            bankOperationsService.transfer("10", "200", 100);
+            bankOperationsImpl.transfer("10", "200", 100);
             ;
             ;
         });
 
-        assertEquals(2, bankOperationsService.getBank().getAccounts().size());
-        assertEquals(200, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
-        assertEquals(0, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
+        assertEquals(2, bankOperationsImpl.getBank().getAccounts().size());
+        assertEquals(200, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
+        assertEquals(0, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
     }
 
     @Test
     public void TransferTestDestinationAccountNotFound() {
 
-        bankOperationsService.deposit("100", 200);
-        bankOperationsService.deposit("200", 0);
+        bankOperationsImpl.deposit("100", 200);
+        bankOperationsImpl.deposit("200", 0);
 
-        assertEquals(2, bankOperationsService.getBank().getAccounts().size());
-        assertEquals(200, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
-        assertEquals(0, bankOperationsService.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
+        assertEquals(2, bankOperationsImpl.getBank().getAccounts().size());
+        assertEquals(200, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[0].getBalance());
+        assertEquals(0, bankOperationsImpl.getBank().getAccounts().toArray(new Account[0])[1].getBalance());
 
-        bankOperationsService.transfer("100", "20", 10);
+        bankOperationsImpl.transfer("100", "20", 10);
 
         Account account1, account2, account3;
-        account1 = bankOperationsService.findAccountByID("100");
-        account2 = bankOperationsService.findAccountByID("200");
-        account3 = bankOperationsService.findAccountByID("20");
-        assertEquals(3, bankOperationsService.getBank().getAccounts().size());
+        account1 = bankOperationsImpl.findAccountByID("100");
+        account2 = bankOperationsImpl.findAccountByID("200");
+        account3 = bankOperationsImpl.findAccountByID("20");
+        assertEquals(3, bankOperationsImpl.getBank().getAccounts().size());
         assertEquals(190, account1.getBalance());
         assertEquals(0, account2.getBalance());
         assertEquals(10, account3.getBalance());
