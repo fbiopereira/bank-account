@@ -1,6 +1,9 @@
 package com.fbiopereira.bankaccount.bdd.steps;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fbiopereira.bankaccount.service.BankOperationsService;
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -26,6 +29,9 @@ public class RestSteps {
     public static String contextJson = "";
     public static ResultActions contextResultActions;
 
+    @Autowired
+    BankOperationsService bankOperationsService;
+
 
     @Before
     public void setUp() {
@@ -33,11 +39,17 @@ public class RestSteps {
 
     }
 
+    @After
+    public void cleanUp() {
+        bankOperationsService.resetBank();
+    }
+
+
     @When("I receive a POST request on reset endpoint")
     public void request_to_reset() throws Exception {
         contextResultActions = contextMockMvc.perform(MockMvcRequestBuilders
                 .request("POST",
-                        URI.create("/api/bank/reset"))
+                        URI.create("/reset"))
                 .content(contextJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -47,7 +59,17 @@ public class RestSteps {
     public void request_to_event() throws Exception {
         contextResultActions = contextMockMvc.perform(MockMvcRequestBuilders
                 .request("POST",
-                        URI.create("/api/bank/event"))
+                        URI.create("/event"))
+                .content(contextJson)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+    }
+
+    @When("I receive a GET request on balance endpoint with accountId {string}")
+    public void request_to_balance(String accountId) throws Exception {
+        contextResultActions = contextMockMvc.perform(MockMvcRequestBuilders
+                .request("GET",
+                        URI.create("/balance?account_id=" + accountId))
                 .content(contextJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -63,8 +85,18 @@ public class RestSteps {
         contextResultActions.andExpect(MockMvcResultMatchers.status().is(statusCode));
     }
 
-    @Then("Should have response body")
-    public void should_have_response_body(String body) throws Exception {
+    @Then("Should have json response body")
+    public void should_have_json_response_body(String body) throws Exception {
+        String expected = body.trim();
+        String received = contextResultActions.andReturn().getResponse().getContentAsString().trim();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        Assertions.assertThat(mapper.readTree(expected)).isEqualTo(mapper.readTree(received));
+    }
+
+    @Then("Should have text response body")
+    public void should_have_text_response_body(String body) throws Exception {
         String expected = body.trim();
         String received = contextResultActions.andReturn().getResponse().getContentAsString().trim();
 

@@ -23,7 +23,7 @@ public class BankOperationsService implements BankOperations {
     Bank bank;
 
     @Override
-    public Account deposit(int accountId, int amount) {
+    public Account deposit(String accountId, int amount) {
 
         Account account;
 
@@ -41,7 +41,7 @@ public class BankOperationsService implements BankOperations {
     }
 
     @Override
-    public Account withdraw(int accountId, int amount) {
+    public Account withdraw(String accountId, int amount) {
         try {
             Account account = this.findAccountByID(accountId);
             account.doOperation(amount, withdraw);
@@ -54,7 +54,7 @@ public class BankOperationsService implements BankOperations {
 
 
     @Override
-    public Map<TransferAccountType, Account> transfer(int sourceAccountId, int destinationAccountId, int amount) {
+    public Map<TransferAccountType, Account> transfer(String sourceAccountId, String destinationAccountId, int amount) {
         try {
             Account originAccount = this.withdraw(sourceAccountId, amount);
             Account destinationAccount = this.deposit(destinationAccountId, amount);
@@ -80,9 +80,9 @@ public class BankOperationsService implements BankOperations {
     }
 
     @Override
-    public Account findAccountByID(int accountId) {
+    public Account findAccountByID(String accountId) {
 
-        Account accountFound = bank.getAccounts().stream().filter(account -> accountId == account.getId())
+        Account accountFound = bank.getAccounts().stream().filter(account -> accountId.equals(account.getId()))
                 .findFirst()
                 .orElse(null);
 

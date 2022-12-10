@@ -12,23 +12,23 @@ public class AccountTest {
     @Test
     void AccountCreation(){
 
-        Account account = new Account(100);
-        assertEquals(100, account.getId());
+        Account account = new Account("100");
+        assertEquals("100", account.getId());
         assertEquals(0, account.getBalance());
 
        assertThrows(InvalidOperationException.class, () -> {
-            new Account(0);
+            new Account(null);
         });
 
        assertThrows(InvalidOperationException.class, () -> {
-            new Account(-1);
+            new Account(null);
         });
     }
 
     @Test
     void AccountOperation(){
 
-        Account account = new Account(100);
+        Account account = new Account("100");
         account.doOperation(100, OperationType.deposit);
         assertEquals(100, account.getBalance());
         account.doOperation(100, OperationType.withdraw);

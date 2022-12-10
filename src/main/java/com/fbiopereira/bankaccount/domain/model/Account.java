@@ -1,6 +1,5 @@
 package com.fbiopereira.bankaccount.domain.model;
 
-import com.fbiopereira.bankaccount.domain.enums.AccountErrorMessages;
 import com.fbiopereira.bankaccount.domain.enums.OperationType;
 import com.fbiopereira.bankaccount.domain.exceptions.InvalidOperationException;
 
@@ -11,12 +10,12 @@ import static com.fbiopereira.bankaccount.domain.enums.AccountErrorMessages.TRAN
 
 public class Account {
 
-private int id;
+private String id;
 private int balance;
 
-public Account(int id){
+public Account(String id){
 
-    if (id > 0) {
+    if (id != null) {
         this.id = id;
         this.balance = 0;
     }
@@ -26,7 +25,7 @@ public Account(int id){
 }
 
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -48,7 +47,7 @@ public Account(int id){
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Account account = (Account) o;
-        return id == account.id;
+        return id.equals(account.id);
     }
 
     @Override

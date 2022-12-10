@@ -19,11 +19,31 @@ import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/bank")
+@RequestMapping("/")
 public class BankApi {
 
     @Autowired
     BankOperationsService bankOperations;
+
+    @GetMapping(path = "/balance", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get the balance fron an account", responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = String.class)))})
+    public ResponseEntity<Integer> getBalance(@RequestParam("account_id") String accountId) {
+
+        if (accountId != null){
+
+            try {
+                Account account = bankOperations.findAccountByID(accountId);
+                return ResponseEntity.status(HttpStatus.OK).body(account.getBalance());
+            }
+            catch (AccountNotFoundException exception){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0);
+
+    }
+
+
 
     @PostMapping(path = "/reset", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Resets all accounts in our bank", responses = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = String.class)))})
@@ -51,7 +71,7 @@ public class BankApi {
                 return ResponseEntity.status(HttpStatus.CREATED).body(new BankOperationsResponse(null, account));
             case withdraw:
                 try{
-                    account = bankOperations.withdraw(bankOperationsRequest.getDestination(), bankOperationsRequest.getAmount());
+                    account = bankOperations.withdraw(bankOperationsRequest.getOrigin(), bankOperationsRequest.getAmount());
                     return ResponseEntity.status(HttpStatus.CREATED).body(new BankOperationsResponse(account, null));
                 }
                 catch (AccountNotFoundException exception){

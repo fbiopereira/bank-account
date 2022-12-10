@@ -7,12 +7,12 @@ public class BankOperationsRequest {
 
     @JsonProperty(required = true)
     private OperationType type;
-    private int origin;
+    private String origin;
 
     @JsonProperty(required = true)
     private int amount;
 
-    private int destination;
+    private String destination;
 
 
     public OperationType getType() {
@@ -23,19 +23,19 @@ public class BankOperationsRequest {
         this.type = type;
     }
 
-    public int getOrigin() {
+    public String getOrigin() {
         return origin;
     }
 
-    public void setOrigin(int origin) {
+    public void setOrigin(String origin) {
         this.origin = origin;
     }
 
-    public int getDestination() {
+    public String getDestination() {
         return destination;
     }
 
-    public void setDestination(int destination) {
+    public void setDestination(String destination) {
         this.destination = destination;
     }
 

@@ -7,10 +7,10 @@ import java.util.Map;
 
 public interface BankOperations {
 
-    public Account deposit(int accountId, int amount);
-    public Account withdraw(int accountId, int amount);
-    public Map<TransferAccountType, Account> transfer(int sourceAccountId, int destinationAccountId, int amount);
+    public Account deposit(String accountId, int amount);
+    public Account withdraw(String accountId, int amount);
+    public Map<TransferAccountType, Account> transfer(String sourceAccountId, String destinationAccountId, int amount);
     public void saveAccount(Account account);
-    public Account findAccountByID(int id);
+    public Account findAccountByID(String id);
     public void resetBank();
 }
