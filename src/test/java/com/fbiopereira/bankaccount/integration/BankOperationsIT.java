@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-public class BankOperationsTests {
+class BankOperationsIT {
 
     @Autowired
     BankOperationsImpl bankOperationsImpl;
@@ -23,7 +23,7 @@ public class BankOperationsTests {
     }
 
     @Test
-    public void resetBankTest() {
+    void resetBankTest() {
 
         bankOperationsImpl.deposit("100", 100);
         bankOperationsImpl.deposit("200", 100);
@@ -38,7 +38,7 @@ public class BankOperationsTests {
     }
 
     @Test
-    public void depositTest() {
+    void depositTest() {
 
         bankOperationsImpl.deposit("100", 100);
         assertEquals(1, bankOperationsImpl.getBank().getAccounts().size());
@@ -55,7 +55,7 @@ public class BankOperationsTests {
     }
 
     @Test
-    public void withDrawTestSuccess() {
+    void withDrawTestSuccess() {
 
         bankOperationsImpl.deposit("100", 100);
         assertEquals(1, bankOperationsImpl.getBank().getAccounts().size());
@@ -73,7 +73,7 @@ public class BankOperationsTests {
     }
 
     @Test
-    public void withDrawTestMultipleAccountsSuccess() {
+    void withDrawTestMultipleAccountsSuccess() {
 
         Account accountToCheck;
         bankOperationsImpl.deposit("100", 100);
@@ -105,7 +105,7 @@ public class BankOperationsTests {
     }
 
     @Test
-    public void withDrawTestAccountNotFound() {
+    void withDrawTestAccountNotFound() {
 
         assertThrows(AccountNotFoundException.class, () -> {
             bankOperationsImpl.withdraw("10", 50);
@@ -117,7 +117,7 @@ public class BankOperationsTests {
     }
 
     @Test
-    public void TransferTestSuccess() {
+    void TransferTestSuccess() {
 
         bankOperationsImpl.deposit("100", 200);
         bankOperationsImpl.deposit("200", 0);
@@ -133,7 +133,7 @@ public class BankOperationsTests {
     }
 
     @Test
-    public void TransferTestSourceAccountNotFound() {
+    void TransferTestSourceAccountNotFound() {
 
         bankOperationsImpl.deposit("100", 200);
         bankOperationsImpl.deposit("200", 0);
@@ -154,7 +154,7 @@ public class BankOperationsTests {
     }
 
     @Test
-    public void TransferTestDestinationAccountNotFound() {
+    void TransferTestDestinationAccountNotFound() {
 
         bankOperationsImpl.deposit("100", 200);
         bankOperationsImpl.deposit("200", 0);

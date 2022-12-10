@@ -5,8 +5,8 @@ import com.fbiopereira.bankaccount.domain.model.Account;
 import com.fbiopereira.bankaccount.data.Bank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import java.util.HashMap;
+
+import java.util.EnumMap;
 import java.util.Map;
 
 import static com.fbiopereira.bankaccount.domain.enums.AccountErrorMessages.ACCOUNT_DOES_NOT_EXIST;
@@ -59,7 +59,7 @@ public class BankOperationsImpl implements BankOperations {
             Account originAccount = this.withdraw(sourceAccountId, amount);
             Account destinationAccount = this.deposit(destinationAccountId, amount);
 
-            Map<TransferAccountType,Account> returnMap = new HashMap<>();
+            EnumMap<TransferAccountType,Account> returnMap = new EnumMap<>(TransferAccountType.class);
 
             returnMap.put(origin, originAccount);
             returnMap.put(destination, destinationAccount);

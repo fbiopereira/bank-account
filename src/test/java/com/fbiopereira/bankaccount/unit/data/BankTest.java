@@ -5,10 +5,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
-public class Bank {
+class BankTest {
 
     @Test
-    public void BankCreation(){
+    void BankCreation(){
 
         com.fbiopereira.bankaccount.data.Bank bank = new com.fbiopereira.bankaccount.data.Bank();
         assertEquals(0, bank.getAccounts().size());

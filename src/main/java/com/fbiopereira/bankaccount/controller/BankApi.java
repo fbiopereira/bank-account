@@ -1,6 +1,5 @@
 package com.fbiopereira.bankaccount.controller;
 
-import com.fbiopereira.bankaccount.domain.exceptions.AccountNotFoundException;
 import com.fbiopereira.bankaccount.dto.*;
 import com.fbiopereira.bankaccount.service.BankOperationsService;
 import io.swagger.v3.oas.annotations.Operation;
