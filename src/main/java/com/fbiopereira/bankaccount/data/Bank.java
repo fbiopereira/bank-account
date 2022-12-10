@@ -1,4 +1,4 @@
-package com.fbiopereira.bankaccount.data.memory;
+package com.fbiopereira.bankaccount.data;
 
 import com.fbiopereira.bankaccount.domain.model.Account;
 import org.springframework.context.annotation.Scope;

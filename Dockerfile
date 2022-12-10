@@ -9,13 +9,14 @@ WORKDIR $APP_HOME
 # COPY SOURCE CODE TO CREATED FOLDER
 COPY . $APP_HOME
 
+RUN chmod 777 -R $APP_HOME
+
 # COMPILING
-RUN mvn clean package -Dmaven.test.skip=true
+RUN --mount=type=cache,target=/root/.m2 mvn -f $APP_HOME/pom.xml clean package -Dmaven.test.skip=true
 
 
-#ESTAGIO DE EXECUCAO
-FROM openjdk:17.0.1
-COPY --from=builder /build/target/*.jar /app/bankAccount.jar
+FROM openjdk:17.0.2 AS RUNTIME
+COPY --from=MAVEN_BUILD_IMAGE /app/src/target/*.jar /app/bankAccount.jar
 WORKDIR /app
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/app/bankAccount.jar"]

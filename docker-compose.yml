@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  application:
+    container_name: bank-account-api
+    image: bank-account-api
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - "bank-account"
+
+
+networks:
+  bank-account:
+    driver: bridge

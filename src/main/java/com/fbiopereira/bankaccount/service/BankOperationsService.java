@@ -1,103 +1,70 @@
 package com.fbiopereira.bankaccount.service;
+
 import com.fbiopereira.bankaccount.domain.enums.TransferAccountType;
 import com.fbiopereira.bankaccount.domain.exceptions.AccountNotFoundException;
 import com.fbiopereira.bankaccount.domain.model.Account;
-import com.fbiopereira.bankaccount.data.memory.Bank;
-import com.fbiopereira.bankaccount.usecases.BankOperations;
+import com.fbiopereira.bankaccount.dto.BankOperationsRequest;
+import com.fbiopereira.bankaccount.dto.BankOperationsResponse;
+import com.fbiopereira.bankaccount.usecases.BankOperationsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
+
 import java.util.Map;
 
-import static com.fbiopereira.bankaccount.domain.enums.AccountErrorMessages.ACCOUNT_DOES_NOT_EXIST;
-import static com.fbiopereira.bankaccount.domain.enums.OperationType.deposit;
-import static com.fbiopereira.bankaccount.domain.enums.OperationType.withdraw;
-import static com.fbiopereira.bankaccount.domain.enums.TransferAccountType.destination;
-import static com.fbiopereira.bankaccount.domain.enums.TransferAccountType.origin;
-
 @Service
-public class BankOperationsService implements BankOperations {
-
+public class BankOperationsService {
 
     @Autowired
-    Bank bank;
+    BankOperationsImpl bankOperations;
 
-    @Override
-    public Account deposit(String accountId, int amount) {
+    public void resetBank() {
+        bankOperations.resetBank();
+    }
 
-        Account account;
+    public ResponseEntity<Integer> balance(String accountId)  {
+
+        try {
+            Account account = bankOperations.findAccountByID(accountId);
+            return ResponseEntity.status(HttpStatus.OK).body(account.getBalance());
+        }
+        catch (AccountNotFoundException exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0);
+        }
+
+    }
+
+    public ResponseEntity<Object> deposit(BankOperationsRequest bankOperationsRequest) {
+
+        Account account = bankOperations.deposit(bankOperationsRequest.getDestination(), bankOperationsRequest.getAmount());
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BankOperationsResponse(null, account));
+
+    }
+
+    public ResponseEntity<Object> withdraw(BankOperationsRequest bankOperationsRequest){
 
         try{
-            account = this.findAccountByID(accountId);
-
+            Account account = bankOperations.withdraw(bankOperationsRequest.getOrigin(), bankOperationsRequest.getAmount());
+            return ResponseEntity.status(HttpStatus.CREATED).body(new BankOperationsResponse(account, null));
         }
-        catch (AccountNotFoundException e){
-            account = new Account(accountId);
-      }
-
-        account.doOperation(amount, deposit);
-        this.saveAccount(account);
-        return account;
-    }
-
-    @Override
-    public Account withdraw(String accountId, int amount) {
-        try {
-            Account account = this.findAccountByID(accountId);
-            account.doOperation(amount, withdraw);
-            this.saveAccount(account);
-            return account;
-        } catch (AccountNotFoundException e) {
-            throw new AccountNotFoundException(ACCOUNT_DOES_NOT_EXIST.getCode(), ACCOUNT_DOES_NOT_EXIST.getMessage());
-        }
-    }
-
-
-    @Override
-    public Map<TransferAccountType, Account> transfer(String sourceAccountId, String destinationAccountId, int amount) {
-        try {
-            Account originAccount = this.withdraw(sourceAccountId, amount);
-            Account destinationAccount = this.deposit(destinationAccountId, amount);
-
-            Map<TransferAccountType,Account> returnMap = new HashMap<>();
-
-            returnMap.put(origin, originAccount);
-            returnMap.put(destination, destinationAccount);
-
-            return returnMap;
-
-
-        } catch (AccountNotFoundException e) {
-            throw new AccountNotFoundException(ACCOUNT_DOES_NOT_EXIST.getCode(), ACCOUNT_DOES_NOT_EXIST.getMessage());
+        catch (AccountNotFoundException exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0);
         }
 
     }
 
-    @Override
-    public void saveAccount(Account account) {
-        this.bank.getAccounts().remove(account);
-        this.bank.getAccounts().add(account);
-    }
+    public ResponseEntity<Object> transfer(BankOperationsRequest bankOperationsRequest){
 
-    @Override
-    public Account findAccountByID(String accountId) {
+        try{
+            Map<TransferAccountType,Account> returnMap = bankOperations.transfer(bankOperationsRequest.getOrigin(), bankOperationsRequest.getDestination(), bankOperationsRequest.getAmount());
 
-        Account accountFound = bank.getAccounts().stream().filter(account -> accountId.equals(account.getId()))
-                .findFirst()
-                .orElse(null);
-
-        if (accountFound == null) {
-            throw new AccountNotFoundException(ACCOUNT_DOES_NOT_EXIST.getCode(), ACCOUNT_DOES_NOT_EXIST.getMessage());
+            return ResponseEntity.status(HttpStatus.CREATED).body(new BankOperationsResponse(returnMap.get(TransferAccountType.origin), returnMap.get(TransferAccountType.destination)));
         }
-        return accountFound;
+        catch (AccountNotFoundException exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0);
+        }
+
     }
 
-    @Override
-    public void resetBank() {
-        bank.getAccounts().clear();
-    }
-
-    public Bank getBank() {
-        return bank;
-    }
 }
